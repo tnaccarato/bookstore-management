@@ -47,8 +47,8 @@ public class BookstoreManager {
                 else if(menuSelection == 5){
                     generateSale(statement);
                 }
-                // If they select 6, exits the program
-                else if(menuSelection == 6){
+                // If they select 0, exits the program
+                else if(menuSelection == 0){
                     System.out.println("Thank you for using our services! See you soon!");
                     System.exit(0);
                     break;
@@ -77,7 +77,7 @@ public class BookstoreManager {
     3 - Delete a Book
     4 - Search Books
     5 - Create a Sale Notice for Highest Quantity Product
-    6 - Exit""");
+    0 - Exit""");
     }
 
     /**
