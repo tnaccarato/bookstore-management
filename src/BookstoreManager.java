@@ -17,10 +17,6 @@ public class BookstoreManager {
             );
             // Creates a line to the database for running queries
             Statement statement = connection.createStatement();
-            ResultSet results;
-
-            deleteBook(statement);
-
         }
         // If an error occurs, prints the stack
         catch (SQLException e) {
@@ -47,7 +43,7 @@ public class BookstoreManager {
         int qty = input.nextInt();
         input.nextLine();
         // Adds the book to the table
-        String query = "INSERT INTO books VALUES(\"%s\",\"%s\",\"%s\",%s)".
+        String query = "INSERT INTO books VALUES('%s','%s','%s',%s)".
                 formatted(id, title, author, qty);
         statement.executeUpdate(query);
         System.out.println("Book has been added.");
@@ -81,49 +77,23 @@ public class BookstoreManager {
             boolean validSelection = false;
             // If user selects 1, runs an SQL query updating the id
             if (fieldSelection == 1) {
-                while (true) {
-                    try {
-                        validSelection = true;
-                        System.out.println("What would you like to change the ID to?");
-                        String updateID = input.nextLine();
-                        statement.executeUpdate(
-                                "UPDATE books SET id=\"%s\" WHERE id=\"%s\";"
-                                        .formatted(updateID, idSelection));
-                        break;
-                    }
-                    // If there is already an entry with that ID, throws an error and allows the
-                    // user to try again
-                    catch (SQLIntegrityConstraintViolationException e) {
-                        System.out.println("The ID you selected already exists. Please try again.");
-                    }
-                }
+                validSelection = true;
+                changeID(statement, input, idSelection);
             }
             // If user selects 2, runs an SQL query updating the name
             else if (fieldSelection == 2) {
                 validSelection = true;
-                System.out.println("What would you like to change the name of the book to?");
-                String updateName = input.nextLine();
-                statement.executeUpdate(
-                        "UPDATE books SET title=\"%s\" WHERE id=\"%s\";"
-                                .formatted(updateName, idSelection));
+                changeName(statement, input, idSelection);
             }
             // If user selects 3, runs an SQL query updating the author
             else if (fieldSelection == 3) {
                 validSelection = true;
-                System.out.println("What would you like to change the author of the book to?");
-                String updateAuthor = input.nextLine();
-                statement.executeUpdate(
-                        "UPDATE books SET author=\"%s\" WHERE id=\"%s\";"
-                                .formatted(updateAuthor, idSelection));
+                changeAuthor(statement, input, idSelection);
             }
             // If user selects 4, runs an SQL query updating the quantity
             else if (fieldSelection == 4) {
                 validSelection = true;
-                System.out.println("What would you like to change the quantity to?");
-                String updateQty = input.nextLine();
-                statement.executeUpdate(
-                        "UPDATE books SET qty=\"%s\" WHERE id=\"%s\";"
-                                .formatted(updateQty, idSelection));
+                changeQty(statement, input, idSelection);
             }
             // If the user does not enter a valid input allows them to try again
             if (!validSelection) {
@@ -137,10 +107,51 @@ public class BookstoreManager {
         }
     }
 
+    private static void changeQty(Statement statement, Scanner input, String idSelection) throws SQLException {
+        System.out.println("What would you like to change the quantity to?");
+        String updateQty = input.nextLine();
+        statement.executeUpdate(
+                "UPDATE books SET qty='%s' WHERE id='%s';"
+                        .formatted(updateQty, idSelection));
+    }
+
+    private static void changeAuthor(Statement statement, Scanner input, String idSelection) throws SQLException {
+        System.out.println("What would you like to change the author of the book to?");
+        String updateAuthor = input.nextLine();
+        statement.executeUpdate(
+                "UPDATE books SET author='%s' WHERE id='%s';"
+                        .formatted(updateAuthor, idSelection));
+    }
+
+    private static void changeName(Statement statement, Scanner input, String idSelection) throws SQLException {
+        System.out.println("What would you like to change the name of the book to?");
+        String updateName = input.nextLine();
+        statement.executeUpdate(
+                "UPDATE books SET title='%s' WHERE id='%s';"
+                        .formatted(updateName, idSelection));
+    }
+
+    private static void changeID(Statement statement, Scanner input, String idSelection) throws SQLException {
+        while (true) {
+            try {
+                System.out.println("What would you like to change the ID to?");
+                String updateID = input.nextLine();
+                statement.executeUpdate(
+                        "UPDATE books SET id='%s' WHERE id='%s';"
+                                .formatted(updateID, idSelection));
+                break;
+            }
+            // If there is already an entry with that ID, throws an error and allows the
+            // user to try again
+            catch (SQLIntegrityConstraintViolationException e) {
+                System.out.println("The ID you selected already exists. Please try again.");
+            }
+        }
+    }
+
     private static ResultSet checkID(Statement statement, String idSelection) throws SQLException {
-        ResultSet results = statement.executeQuery("SELECT * FROM books WHERE id = \"%s\";".
+        return statement.executeQuery("SELECT * FROM books WHERE id = '%s';".
                 formatted(idSelection));
-        return results;
     }
 
     public static void deleteBook(Statement statement) throws SQLException {
@@ -160,13 +171,65 @@ public class BookstoreManager {
             }
         }
         // Runs an SQL query to delete the book and prints a confirmation
-        statement.executeUpdate("DELETE FROM books WHERE id=\"%s\";".formatted(idSelection));
+        statement.executeUpdate("DELETE FROM books WHERE id='%s';".formatted(idSelection));
         System.out.println("Book has been deleted.");
     }
 
-    public static void searchBooks(Statement statement){
+    public static void searchBooks(Statement statement) throws SQLException {
+        Scanner input = new Scanner(System.in);
+        // Asks the user what they would like to search for
+        while (true) {
+            System.out.println("Please enter the search term you would like to enter");
+            String searchTerm = input.nextLine();
+            // Executes an SQL query with the search term
+            ResultSet results = statement.executeQuery(
+                    "SELECT * FROM books " +
+                            "WHERE id LIKE \"%" + searchTerm + "%\"" +
+                            "OR title LIKE \"%" + searchTerm + "%\"" +
+                            "OR author LIKE \"%"+ searchTerm + "%\"");
+            // If no results are found, prints a message and asks if they would like to try again
+            if (!results.isBeforeFirst()) {
+                noResults(statement, input);
+                return;
+            }
+            // If results are found, prints them in an easy-to-read format
+            else {
+                printResults(results);
+                break;
+            }
+        }
+    }
 
+    private static void printResults(ResultSet results) throws SQLException {
+        while (results.next()) {
+            System.out.println(
+                    "ID: " + results.getString("id") + "\n"
+                    + "Title: " + results.getString("title") + "\n"
+                    + "Author: " + results.getString("author") + "\n"
+                    + "Quantity: " + results.getInt("qty") + "\n");
+        }
+    }
+
+    private static void noResults(Statement statement, Scanner input) throws SQLException {
+        while (true) {
+            System.out.println("No results were found, would you like to try again? (y/n)");
+            String tryAgain = input.nextLine();
+            // If they select y, restarts the method
+            if (tryAgain.equals("y")) {
+                searchBooks(statement);
+            }
+            // If they select n, exits the method
+            else if (tryAgain.equals("n")){
+                return;
+            }
+            // Otherwise, prints an error message and allows them to try again
+            else {
+                System.out.println("Input not recognised, please enter either y or n and try " +
+                        "again");
+            }
+        }
     }
 }
+
 
 
