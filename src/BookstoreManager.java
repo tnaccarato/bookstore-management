@@ -95,7 +95,7 @@ public class BookstoreManager {
             // If user selects 2, runs an SQL query updating the name
             else if (fieldSelection == 2) {
                 validSelection = true;
-                changeName(statement, input, idSelection);
+                changeTitle(statement, input, idSelection);
             }
             // If user selects 3, runs an SQL query updating the author
             else if (fieldSelection == 3) {
@@ -119,6 +119,13 @@ public class BookstoreManager {
         }
     }
 
+    /**
+     * Changes the quantity of a book with the id provided.
+     * @param statement
+     * @param input Scanner input
+     * @param idSelection book id
+     * @throws SQLException
+     */
     private static void changeQty(Statement statement, Scanner input, String idSelection) throws SQLException {
         System.out.println("What would you like to change the quantity to?");
         String updateQty = input.nextLine();
@@ -127,6 +134,13 @@ public class BookstoreManager {
                         .formatted(updateQty, idSelection));
     }
 
+    /**
+     * Change the author of a book with the id provided
+     * @param statement
+     * @param input Scanner input
+     * @param idSelection book id
+     * @throws SQLException
+     */
     private static void changeAuthor(Statement statement, Scanner input, String idSelection) throws SQLException {
         System.out.println("What would you like to change the author of the book to?");
         String updateAuthor = input.nextLine();
@@ -135,14 +149,28 @@ public class BookstoreManager {
                         .formatted(updateAuthor, idSelection));
     }
 
-    private static void changeName(Statement statement, Scanner input, String idSelection) throws SQLException {
-        System.out.println("What would you like to change the name of the book to?");
+    /**
+     * Changes the title of the book with the id provided.
+     * @param statement
+     * @param input Scanner input
+     * @param idSelection book id
+     * @throws SQLException
+     */
+    private static void changeTitle(Statement statement, Scanner input, String idSelection) throws SQLException {
+        System.out.println("What would you like to change the title of the book to?");
         String updateName = input.nextLine();
         statement.executeUpdate(
                 "UPDATE books SET title='%s' WHERE id='%s';"
                         .formatted(updateName, idSelection));
     }
 
+    /**
+     * Changes the book id of the book id provided
+     * @param statement
+     * @param input Scanner input
+     * @param idSelection book id
+     * @throws SQLException
+     */
     private static void changeID(Statement statement, Scanner input, String idSelection) throws SQLException {
         while (true) {
             try {
@@ -161,13 +189,20 @@ public class BookstoreManager {
         }
     }
 
+    /**
+     * Checks that the id provided exists in the table
+     * @param statement
+     * @param idSelection book id
+     * @return ResultSet
+     * @throws SQLException
+     */
     private static ResultSet checkID(Statement statement, String idSelection) throws SQLException {
         return statement.executeQuery("SELECT * FROM books WHERE id = '%s';".
                 formatted(idSelection));
     }
 
     /**
-     * Delete book.
+     * Delete a book with the book id provided.
      *
      * @param statement the statement
      * @throws SQLException the sql exception
@@ -196,7 +231,7 @@ public class BookstoreManager {
     }
 
     /**
-     * Search books.
+     * Search books based on a search term.
      *
      * @param statement the statement
      * @throws SQLException the sql exception
@@ -226,6 +261,11 @@ public class BookstoreManager {
         }
     }
 
+    /**
+     * Prints a summary of all the books in the table with the format id - title
+     * @param statement
+     * @throws SQLException
+     */
     private static void printSummary(Statement statement) throws SQLException{
         ResultSet results = statement.executeQuery("SELECT * FROM books;");
         while(results.next()){
@@ -234,6 +274,11 @@ public class BookstoreManager {
         }
     }
 
+    /**
+     * Prints the results of a query in an easy-to-read format.
+     * @param results
+     * @throws SQLException
+     */
     private static void printResults(ResultSet results) throws SQLException {
         while (results.next()) {
             System.out.println(
@@ -244,7 +289,13 @@ public class BookstoreManager {
         }
     }
 
-
+    /**
+     * Displays a menu if no search results were found and allows the user to try again if they want
+     * to.
+     * @param statement
+     * @param input Scanner input
+     * @throws SQLException
+     */
     private static void noResults(Statement statement, Scanner input) throws SQLException {
         while (true) {
             System.out.println("No results were found, would you like to try again? (y/n)");
