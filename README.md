@@ -21,3 +21,5 @@ This allows a user to search the table for any books that contain the search ter
 ### Create Sale Notice
 This allows the user to generate a sale notice for the book with the highest quantity of stock in the following format:\
 {Highest Quantity Book} is now on sale! Hurry, only {Number of Copies} copies in stock!
+## Exit
+Exits the program
