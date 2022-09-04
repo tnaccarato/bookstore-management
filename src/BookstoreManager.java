@@ -1,6 +1,9 @@
 import java.sql.*;
 import java.util.Scanner;
 
+/**
+ * The type Bookstore manager.
+ */
 public class BookstoreManager {
     /**
      * The main method of the program.
@@ -17,6 +20,7 @@ public class BookstoreManager {
             );
             // Creates a line to the database for running queries
             Statement statement = connection.createStatement();
+            updateBook(statement);
         }
         // If an error occurs, prints the stack
         catch (SQLException e) {
@@ -49,9 +53,17 @@ public class BookstoreManager {
         System.out.println("Book has been added.");
     }
 
+    /**
+     * Updates a chosen field of the book with the id given.
+     *
+     * @param statement the statement
+     * @throws SQLException the sql exception
+     */
     public static void updateBook(Statement statement) throws SQLException {
         Scanner input = new Scanner(System.in);
         String idSelection;
+        // Prints a summary of all the books in the table (id - title)
+        printSummary(statement);
         // Asks the user to select the book they would like to update based on its id
         while (true) {
             System.out.println("What is the ID of the book you would like to update?");
@@ -154,8 +166,16 @@ public class BookstoreManager {
                 formatted(idSelection));
     }
 
+    /**
+     * Delete book.
+     *
+     * @param statement the statement
+     * @throws SQLException the sql exception
+     */
     public static void deleteBook(Statement statement) throws SQLException {
         Scanner input = new Scanner(System.in);
+        // Prints a summary of all the books in the table (id - title)
+        printSummary(statement);
         // Asks the user for the ID of the book they want to delete
         String idSelection;
         while (true) {
@@ -175,6 +195,12 @@ public class BookstoreManager {
         System.out.println("Book has been deleted.");
     }
 
+    /**
+     * Search books.
+     *
+     * @param statement the statement
+     * @throws SQLException the sql exception
+     */
     public static void searchBooks(Statement statement) throws SQLException {
         Scanner input = new Scanner(System.in);
         // Asks the user what they would like to search for
@@ -200,6 +226,14 @@ public class BookstoreManager {
         }
     }
 
+    private static void printSummary(Statement statement) throws SQLException{
+        ResultSet results = statement.executeQuery("SELECT * FROM books;");
+        while(results.next()){
+            System.out.println(results.getString("id")+ " - "
+                    + results.getString("title"));
+        }
+    }
+
     private static void printResults(ResultSet results) throws SQLException {
         while (results.next()) {
             System.out.println(
@@ -209,6 +243,7 @@ public class BookstoreManager {
                     + "Quantity: " + results.getInt("qty") + "\n");
         }
     }
+
 
     private static void noResults(Statement statement, Scanner input) throws SQLException {
         while (true) {
