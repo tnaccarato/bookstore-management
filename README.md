@@ -10,16 +10,28 @@ When the user starts the program, they will be given the menu below:\
 0 - Exit
 
 ## Features
+
 ### Enter Book
+
 This allows the user to enter details (ID, title, author and quantity) for a new book and adds them to the table.
+
 ### Update Book
+
 This allows the user to change the details of a book if they give the ID number for the book.
+
 ### Delete Book
+
 This allows the user to delete a book with the given ID number.
+
 ### Search Books
+
 This allows a user to search the table for any books that contain the search term in the ID, title or author columns.
+
 ### Create Sale Notice
+
 This allows the user to generate a sale notice for the book with the highest quantity of stock in the following format:\
 {Highest Quantity Book} is now on sale! Hurry, only {Number of Copies} copies in stock!
+
 ## Exit
-Exits the program
+
+Exits the program.
