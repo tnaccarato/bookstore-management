@@ -1,7 +1,7 @@
 # Bookstore Manager
 A program to be used by a bookstore to allow a clerk to access a database and perform a number of functions on the book data. I have also included the SQL script to recreate the database and table that I used.
 ## Menu
-When the user starts the program, they will be given the menu below:
+When the user starts the program, they will be given the menu below:\
 1 - Enter a New Book\
 2 - Update a Book Entry\
 3 - Delete a Book\
