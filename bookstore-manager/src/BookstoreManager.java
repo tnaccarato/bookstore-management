@@ -43,8 +43,12 @@ public class BookstoreManager {
                 else if(menuSelection == 4){
                     searchBooks(statement);
                 }
-                // If they select 5, exit the program
+                // If they select 5, creates a sale notice
                 else if(menuSelection == 5){
+                    generateSale(statement);
+                }
+                // If they select 6, exits the program
+                else if(menuSelection == 6){
                     System.out.println("Thank you for using our services! See you soon!");
                     System.exit(0);
                     break;
@@ -72,7 +76,8 @@ public class BookstoreManager {
     2 - Update a Book Entry
     3 - Delete a Book
     4 - Search Books
-    5 - Exit""");
+    5 - Create a Sale Notice for Highest Quantity Product
+    6 - Exit""");
     }
 
     /**
@@ -372,6 +377,19 @@ public class BookstoreManager {
                         "again");
             }
         }
+    }
+
+    /**
+     * Creates a sale notice for the highest quantity product in the table.
+     * @param statement statement
+     * @throws SQLException if there is a problem with the SQL query.
+     */
+    public static void generateSale(Statement statement) throws SQLException{
+        ResultSet results = statement.executeQuery("SELECT title, qty FROM books " +
+                "WHERE qty=(SELECT max(qty) from books);");
+        results.next();
+        System.out.println(results.getString("title") + " is on sale now! " +
+                "Hurry, only " + results.getString("qty") + " copies left!");
     }
 }
 
